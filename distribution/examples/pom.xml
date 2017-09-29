@@ -4,13 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.quartz-scheduler</groupId>
-    <artifactId>quartz-parent</artifactId>
+    <groupId>com.ffcs.crmd</groupId>
+    <artifactId>tsp-quartz-parent</artifactId>
     <version>2.3.0-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <artifactId>quartz-examples</artifactId>
+  <artifactId>tsp-quartz-examples</artifactId>
   <packaging>jar</packaging>
   <name>Quartz Example Applications</name>
   
@@ -22,8 +22,8 @@
 
   <dependencies> 
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz</artifactId>
+      <groupId>com.ffcs.crmd</groupId>
+      <artifactId>tsp-quartz</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

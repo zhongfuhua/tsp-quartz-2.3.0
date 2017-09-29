@@ -2,14 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.quartz-scheduler</groupId>
-    <artifactId>quartz-parent</artifactId>
+    <groupId>com.ffcs.crmd</groupId>
+    <artifactId>tsp-quartz-parent</artifactId>
     <version>2.3.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.quartz-scheduler.internal</groupId>
-  <artifactId>quartz-plugins</artifactId>
-  <name>quartz-plugins</name>
+  <artifactId>tsp-quartz-plugins</artifactId>
+  <name>tsp-quartz-plugins</name>
   
   <properties>
 	<derby-version>10.8.2.2</derby-version>
@@ -18,13 +17,13 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>quartz-core</artifactId>
+      <artifactId>tsp-quartz-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz-jobs</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tsp-quartz-jobs</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>  

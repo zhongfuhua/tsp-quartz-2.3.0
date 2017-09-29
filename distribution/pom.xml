@@ -3,14 +3,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.quartz-scheduler</groupId>
-    <artifactId>quartz-parent</artifactId>
+    <groupId>com.ffcs.crmd</groupId>
+    <artifactId>tsp-quartz-parent</artifactId>
     <version>2.3.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>quartz-kit</artifactId>
+  <artifactId>tsp-quartz-kit</artifactId>
   <packaging>pom</packaging>
-  <name>quartz-kit</name>
+  <name>tsp-quartz-kit</name>
 
   <properties>
     <productName>quartz</productName>
@@ -28,14 +28,14 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz</artifactId>
+      <groupId>com.ffcs.crmd</groupId>
+      <artifactId>tsp-quartz</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz-jobs</artifactId>
+      <groupId>com.ffcs.crmd</groupId>
+      <artifactId>tsp-quartz-jobs</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>    
@@ -75,8 +75,8 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.quartz-scheduler</groupId>
-          <artifactId>quartz</artifactId>
+          <groupId>com.ffcs.crmd</groupId>
+          <artifactId>tsp-quartz</artifactId>
           <version>${project.version}</version>
           <classifier>javadoc</classifier>
           <scope>provided</scope>
@@ -115,12 +115,12 @@
               <targetPath>${root.dir}/lib</targetPath>
               <dependencies>
                 <dependency>
-                  <groupId>org.quartz-scheduler</groupId>
-                  <artifactId>quartz</artifactId>
+                  <groupId>com.ffcs.crmd</groupId>
+                  <artifactId>tsp-quartz</artifactId>
                 </dependency>
                 <dependency>
-                  <groupId>org.quartz-scheduler</groupId>
-                  <artifactId>quartz-jobs</artifactId>
+                  <groupId>com.ffcs.crmd</groupId>
+                  <artifactId>tsp-quartz-jobs</artifactId>
                 </dependency>                
                 <dependency>
                   <groupId>com.mchange</groupId>
@@ -144,8 +144,8 @@
             <resource>
               <targetPath>${root.dir}/src</targetPath>
               <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
+                <groupId>com.ffcs.crmd</groupId>
+                <artifactId>tsp-quartz</artifactId>
                 <classifier>sources</classifier>
               </dependency>
               <unpack>true</unpack>
@@ -155,8 +155,8 @@
               <failIfNotFound>false</failIfNotFound>
               <targetPath>${root.dir}/javadoc</targetPath>
               <dependency>
-                <groupId>org.quartz-scheduler</groupId>
-                <artifactId>quartz</artifactId>
+                <groupId>com.ffcs.crmd</groupId>
+                <artifactId>tsp-quartz</artifactId>
                 <classifier>javadoc</classifier>
               </dependency>
               <unpack>true</unpack>
@@ -166,8 +166,8 @@
               <targetPath>${root.dir}/examples/lib</targetPath>
               <dependencies>
                 <dependency>
-                  <groupId>org.quartz-scheduler</groupId>
-                  <artifactId>quartz-examples</artifactId>
+                  <groupId>com.ffcs.crmd</groupId>
+                  <artifactId>tsp-quartz-examples</artifactId>
                   <version>${project.version}</version>
                 </dependency>
                 <!-- non public dependency necessary for running example 10 without adding jta.jar in examples/lib -->
