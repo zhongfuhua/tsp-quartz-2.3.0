@@ -1295,7 +1295,6 @@ public class StdSchedulerFactory implements SchedulerFactory {
             }else{
                 rsrcs.setJobRunShellFactory(jrsf);
             }
-            rsrcs.setJobRunShellFactory(jrsf);
             rsrcs.setMakeSchedulerThreadDaemon(makeSchedulerThreadDaemon);
             rsrcs.setThreadsInheritInitializersClassLoadContext(threadsInheritInitalizersClassLoader);
             rsrcs.setBatchTimeWindow(batchTimeWindow);
