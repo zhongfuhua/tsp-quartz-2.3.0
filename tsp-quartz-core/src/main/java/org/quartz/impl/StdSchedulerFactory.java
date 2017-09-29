@@ -1376,7 +1376,11 @@ public class StdSchedulerFactory implements SchedulerFactory {
             js.setThreadPoolSize(tp.getPoolSize());
             js.initialize(loadHelper, qs.getSchedulerSignaler());
 
-            jrsf.initialize(scheduler);
+            if(processJobClass != null && processJobClass.trim() != ""){
+                tspJrsf.initialize(scheduler);
+            }else{
+                jrsf.initialize(scheduler);
+            }
             
             qs.initialize();
     
