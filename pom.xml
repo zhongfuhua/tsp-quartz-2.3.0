@@ -48,7 +48,7 @@
 		</developer>
 	</developers>
 	<modules>
-		<module>tsp-quartz-checkstyle</module>
+		<!-- <module>tsp-quartz-checkstyle</module> -->
 		<module>tsp-quartz-core</module>
 		<module>tsp-quartz-commonj</module>
 		<module>tsp-quartz-jboss</module>
