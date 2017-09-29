@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>bootstrap</module>
+    <module>tsp-quartz-terracotta-bootstrap</module>
   </modules>
   
   <profiles>
