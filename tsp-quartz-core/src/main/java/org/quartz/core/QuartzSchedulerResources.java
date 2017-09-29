@@ -21,6 +21,7 @@ package org.quartz.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.quartz.impl.tsp.ITspProcessJob;
 import org.quartz.management.ManagementRESTServiceConfiguration;
 import org.quartz.spi.JobStore;
 import org.quartz.spi.SchedulerPlugin;
@@ -68,10 +69,14 @@ public class QuartzSchedulerResources {
     private String rmiCreateRegistryStrategy = CREATE_REGISTRY_NEVER;
 
     private ThreadPool threadPool;
+    
+    private ITspProcessJob tspProcessJob;
 
     private JobStore jobStore;
 
     private JobRunShellFactory jobRunShellFactory;
+    
+    private JobRunShellFactoryTsp tspJobRunShellFactory;
 
     private List<SchedulerPlugin> schedulerPlugins = new ArrayList<SchedulerPlugin>(10);
     
@@ -341,6 +346,31 @@ public class QuartzSchedulerResources {
         this.threadPool = threadPool;
     }
 
+    
+    
+    /**
+     * <p>
+     * Get the <code>{@link IProcessJob}</code> for the <code>{@link QuartzScheduler}</code>
+     * to use.
+     * </p>
+     */
+    public ITspProcessJob getTspProcessJob(){
+        return tspProcessJob;
+    }
+    
+
+    /**
+     * <p>
+     * Set the <code>{@link IProcessJob}</code> for the <code>{@link QuartzScheduler}</code>
+     * to use.
+     * </p>
+     * 
+     */
+    public void setTspProcessJob(ITspProcessJob tspProcessJob) {
+        this.tspProcessJob = tspProcessJob;
+    }
+    
+    
     /**
      * <p>
      * Get the <code>{@link JobStore}</code> for the <code>{@link QuartzScheduler}</code>
@@ -395,6 +425,36 @@ public class QuartzSchedulerResources {
 
         this.jobRunShellFactory = jobRunShellFactory;
     }
+    
+    
+    
+
+    /**
+     * <p>
+     * Get the <code>{@link JobRunShellFactoryTsp}</code> for the <code>{@link QuartzScheduler}</code>
+     * to use.
+     * </p>
+     */
+    public JobRunShellFactoryTsp getTspJobRunShellFactory() {
+        return this.tspJobRunShellFactory;
+    }
+    
+    /**
+     * <p>
+     * Set the <code>{@link JobRunShellFactoryTsp}</code> for the <code>{@link QuartzScheduler}</code>
+     * to use.
+     * </p>
+     * 
+     * @exception IllegalArgumentException
+     *              if tspJobRunShellFactory is null.
+     */
+    public void setTspJobRunShellFactory(JobRunShellFactoryTsp tspJobRunShellFactory) {
+        if (tspJobRunShellFactory == null) {
+            throw new IllegalArgumentException("TspJobRunShellFactory cannot be null.");
+        }
+        this.tspJobRunShellFactory = tspJobRunShellFactory;
+    }
+    
 
     /**
      * <p>

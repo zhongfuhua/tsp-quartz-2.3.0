@@ -275,7 +275,11 @@ public class QuartzSchedulerThread extends Thread {
                     }
                 }
 
-                int availThreadCount = qsRsrcs.getThreadPool().blockForAvailableThreads();
+                int availThreadCount = 1;
+                if(qsRsrcs.getTspProcessJob() == null){
+                    availThreadCount = qsRsrcs.getThreadPool().blockForAvailableThreads();
+                }
+                
                 if(availThreadCount > 0) { // will always be true, due to semantics of blockForAvailableThreads...
 
                     List<OperableTrigger> triggers;
@@ -284,8 +288,13 @@ public class QuartzSchedulerThread extends Thread {
 
                     clearSignaledSchedulingChange();
                     try {
-                        triggers = qsRsrcs.getJobStore().acquireNextTriggers(
+                        if(qsRsrcs.getTspProcessJob() == null){
+                            triggers = qsRsrcs.getJobStore().acquireNextTriggers(
                                 now + idleWaitTime, Math.min(availThreadCount, qsRsrcs.getMaxBatchSize()), qsRsrcs.getBatchTimeWindow());
+                        }else{
+                            triggers = qsRsrcs.getJobStore().acquireNextTriggers(
+                                now + idleWaitTime, qsRsrcs.getMaxBatchSize(), qsRsrcs.getBatchTimeWindow());
+                        }
                         acquiresFailed = 0;
                         if (log.isDebugEnabled())
                             log.debug("batch acquisition of " + (triggers == null ? 0 : triggers.size()) + " triggers");
@@ -385,25 +394,41 @@ public class QuartzSchedulerThread extends Thread {
                                 qsRsrcs.getJobStore().releaseAcquiredTrigger(triggers.get(i));
                                 continue;
                             }
-
-                            JobRunShell shell = null;
-                            try {
-                                shell = qsRsrcs.getJobRunShellFactory().createJobRunShell(bndle);
-                                shell.initialize(qs);
-                            } catch (SchedulerException se) {
-                                qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
-                                continue;
+                            
+                            // transform source code begin
+                            if(qsRsrcs.getTspProcessJob() != null){
+                                JobRunShellTsp shell = null;
+                                try {
+                                    shell = qsRsrcs.getTspJobRunShellFactory().createJobRunShell(bndle);
+                                    boolean prepareStatus = shell.initialize(qs, qsRsrcs.getTspProcessJob());
+                                    if(!prepareStatus){
+                                        continue;
+                                    }
+                                } catch (SchedulerException e) {
+                                    qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
+                                    continue;
+                                }
+                                qsRsrcs.getTspProcessJob().run(shell);
+                            } else {
+                                JobRunShell shell = null;
+                                try {
+                                    shell = qsRsrcs.getJobRunShellFactory().createJobRunShell(bndle);
+                                    shell.initialize(qs);
+                                } catch (SchedulerException se) {
+                                    qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
+                                    continue;
+                                }
+                                
+                                if (qsRsrcs.getThreadPool().runInThread(shell) == false) {
+                                    // this case should never happen, as it is indicative of the
+                                    // scheduler being shutdown or a bug in the thread pool or
+                                    // a thread pool being used concurrently - which the docs
+                                    // say not to do...
+                                    getLog().error("ThreadPool.runInThread() return false!");
+                                    qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
+                                }
                             }
-
-                            if (qsRsrcs.getThreadPool().runInThread(shell) == false) {
-                                // this case should never happen, as it is indicative of the
-                                // scheduler being shutdown or a bug in the thread pool or
-                                // a thread pool being used concurrently - which the docs
-                                // say not to do...
-                                getLog().error("ThreadPool.runInThread() return false!");
-                                qsRsrcs.getJobStore().triggeredJobComplete(triggers.get(i), bndle.getJobDetail(), CompletedExecutionInstruction.SET_ALL_JOB_TRIGGERS_ERROR);
-                            }
-
+                            // transform source code end
                         }
 
                         continue; // while (!halted)

@@ -17,6 +17,22 @@
 
 package org.quartz.impl;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.security.AccessControlException;
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Properties;
+
 import org.quartz.JobListener;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerConfigException;
@@ -24,6 +40,7 @@ import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.TriggerListener;
 import org.quartz.core.JobRunShellFactory;
+import org.quartz.core.JobRunShellFactoryTsp;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.ee.jta.JTAAnnotationAwareJobRunShellFactory;
@@ -33,6 +50,7 @@ import org.quartz.impl.jdbcjobstore.JobStoreSupport;
 import org.quartz.impl.jdbcjobstore.Semaphore;
 import org.quartz.impl.jdbcjobstore.TablePrefixAware;
 import org.quartz.impl.matchers.EverythingMatcher;
+import org.quartz.impl.tsp.ITspProcessJob;
 import org.quartz.management.ManagementRESTServiceConfiguration;
 import org.quartz.simpl.RAMJobStore;
 import org.quartz.simpl.SimpleThreadPool;
@@ -50,23 +68,6 @@ import org.quartz.utils.PoolingConnectionProvider;
 import org.quartz.utils.PropertiesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.security.AccessControlException;
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Properties;
 
 /**
  * <p>
@@ -194,6 +195,8 @@ public class StdSchedulerFactory implements SchedulerFactory {
     public static final String PROP_THREAD_POOL_PREFIX = "org.quartz.threadPool";
 
     public static final String PROP_THREAD_POOL_CLASS = "org.quartz.threadPool.class";
+    
+    public static final String PROP_PROCESS_JOB_CLASS = "org.quartz.processJob.class";
 
     public static final String PROP_JOB_STORE_PREFIX = "org.quartz.jobStore";
 
@@ -1217,15 +1220,28 @@ public class StdSchedulerFactory implements SchedulerFactory {
                 
     
             JobRunShellFactory jrsf = null; // Create correct run-shell factory...
-    
+            JobRunShellFactoryTsp tspJrsf = null;
+            ITspProcessJob tspProcessJob = null;
+            
+            String processJobClass = cfg.getStringProperty(PROP_PROCESS_JOB_CLASS);
+            if(processJobClass != null && processJobClass.trim() != ""){
+                tspJrsf = new StdJobRunShellFactoryTsp();
+                try {
+                    tspProcessJob = (ITspProcessJob) loadHelper.loadClass(processJobClass).newInstance();
+                } catch (Exception e) {
+                    initException = new SchedulerException("ProcessJob class '" + processJobClass + "' could not be instantiated.", e);
+                    throw initException;
+                }
+            }else{
+                if (wrapJobInTx) {
+                    jrsf = new JTAJobRunShellFactory();
+                } else {
+                    jrsf = new JTAAnnotationAwareJobRunShellFactory();
+                }
+            }
+            
             if (userTXLocation != null) {
                 UserTransactionHelper.setUserTxLocation(userTXLocation);
-            }
-    
-            if (wrapJobInTx) {
-                jrsf = new JTAJobRunShellFactory();
-            } else {
-                jrsf = new JTAAnnotationAwareJobRunShellFactory();
             }
     
             if (autoId) {
@@ -1273,6 +1289,12 @@ public class StdSchedulerFactory implements SchedulerFactory {
             rsrcs.setName(schedName);
             rsrcs.setThreadName(threadName);
             rsrcs.setInstanceId(schedInstId);
+            if(processJobClass != null && processJobClass.trim() != ""){
+                rsrcs.setTspJobRunShellFactory(tspJrsf);
+                rsrcs.setTspProcessJob(tspProcessJob);
+            }else{
+                rsrcs.setJobRunShellFactory(jrsf);
+            }
             rsrcs.setJobRunShellFactory(jrsf);
             rsrcs.setMakeSchedulerThreadDaemon(makeSchedulerThreadDaemon);
             rsrcs.setThreadsInheritInitializersClassLoadContext(threadsInheritInitalizersClassLoader);
