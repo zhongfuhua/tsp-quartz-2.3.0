@@ -47,17 +47,17 @@
     </developer>
   </developers>  
   <modules>
-    <module>checkstyle</module>
-    <module>quartz-core</module>
-    <module>quartz-commonj</module>
-    <module>quartz-jboss</module>
-    <module>quartz-stubs</module>
-    <module>quartz-oracle</module>
-    <module>quartz-weblogic</module>    
-    <module>quartz-jobs</module> 
-    <module>quartz-plugins</module>
-    <module>terracotta</module>
-    <module>quartz</module>
+    <module>tsp-quartz-checkstyle</module>
+    <module>tsp-quartz-core</module>
+    <module>tsp-quartz-commonj</module>
+    <module>tsp-quartz-jboss</module>
+    <module>tsp-quartz-stubs</module>
+    <module>tsp-quartz-oracle</module>
+    <module>tsp-quartz-weblogic</module>    
+    <module>tsp-quartz-jobs</module> 
+    <module>tsp-quartz-plugins</module>
+    <module>tsp-quartz-terracotta</module>
+    <module>tsp-quartz</module>
   </modules>
 
   <properties>
